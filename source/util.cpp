@@ -77,7 +77,7 @@ LPVOID get_process_base(const boost::shared_ptr<void>& snapshot, const std::stri
 
 void get_process_info(const std::string exe_name, PROCESS_INFO& process_info)
 {
-
+    // TODO Check if64 bit
     boost::shared_ptr<void> snapshot_pid(CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0), CloseHandle);
     if (snapshot_pid.get() != INVALID_HANDLE_VALUE)
         process_info.pid = get_process_id(snapshot_pid, exe_name);

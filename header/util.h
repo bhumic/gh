@@ -18,6 +18,7 @@ struct PROCESS_INFO
 {
     boost::uint32_t pid;
     LPVOID base;
+    bool is64bit;
 };
 
 void print_error(boost::uint32_t error_code);
