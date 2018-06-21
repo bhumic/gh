@@ -21,6 +21,13 @@ void print_error(boost::uint32_t error_code)
     }
 }
 
+bool is_64bit(boost::shared_ptr<void>& handle)
+{
+    // TODO
+    return false;
+}
+
+
 boost::uint32_t get_process_id(const boost::shared_ptr<void>& snapshot, const std::string& exe_name)
 {
     boost::uint32_t pid = 0;
@@ -77,19 +84,40 @@ LPVOID get_process_base(const boost::shared_ptr<void>& snapshot, const std::stri
 
 void get_process_info(const std::string exe_name, PROCESS_INFO& process_info)
 {
-    // TODO Check if64 bit
+    // get PID of process
     boost::shared_ptr<void> snapshot_pid(CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0), CloseHandle);
     if (snapshot_pid.get() != INVALID_HANDLE_VALUE)
         process_info.pid = get_process_id(snapshot_pid, exe_name);
     else
         print_error(GetLastError());
 
-    boost::shared_ptr<void> snapshot_base(CreateToolhelp32Snapshot(TH32CS_SNAPALL, process_info.pid), CloseHandle);
-    if (snapshot_base.get() != INVALID_HANDLE_VALUE)
-        process_info.base = get_process_base(snapshot_base, exe_name);
-    else
-        print_error(GetLastError());
+    // get load address of process
+    if (process_info.pid)
+    {
+        boost::shared_ptr<void> snapshot_base(CreateToolhelp32Snapshot(TH32CS_SNAPALL, process_info.pid), CloseHandle);
+        if (snapshot_base.get() != INVALID_HANDLE_VALUE)
+            process_info.base = get_process_base(snapshot_base, exe_name);
+        else
+            print_error(GetLastError());
+    }
+
+    // get process handle
+    if (process_info.pid)
+    {
+        boost::shared_ptr<void> handle(OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION, false, process_info.pid), CloseHandle);
+        if (handle.get() != NULL)
+            process_info.handle = handle;
+        else
+            print_error(GetLastError());
+    }
+
+    // check if 64bit
+    if (process_info.handle.get() != NULL)
+    {
+        process_info.is64bit = is_64bit(process_info.handle);
+    }
 }
+
 
 boost::shared_ptr<void> get_process_handle(boost::uint32_t pid)
 {
