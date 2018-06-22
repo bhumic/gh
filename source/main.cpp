@@ -5,7 +5,7 @@
 int main(int argc, char* argv[])
 {
     PROCESS_INFO process_info;
-    get_process_info("chrome.exe", process_info);
+    get_process_info("vcpkgsrv.exe", process_info);
 
     boost::shared_ptr<void> handle = get_process_handle(process_info.pid);
     pe_parser<IMAGE_NT_HEADERS> parser(handle);

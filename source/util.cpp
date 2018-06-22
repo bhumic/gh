@@ -23,7 +23,28 @@ void print_error(boost::uint32_t error_code)
 
 bool is_64bit(boost::shared_ptr<void>& handle)
 {
-    // TODO
+
+    HMODULE dll_handle = GetModuleHandle("kernel32.dll");
+    if (dll_handle != NULL)
+    {
+        typedef BOOL(WINAPI* p_iswow64)(HANDLE, PBOOL);
+        p_iswow64 is_wow64 = (p_iswow64)GetProcAddress(dll_handle, "IsWow64Process");
+        if (is_wow64 != NULL)
+        {
+            BOOL wow64 = false;
+            if (is_wow64(handle.get(), &wow64))
+            {
+                return !wow64;
+            }
+            else
+                print_error(GetLastError());
+        }
+        else
+            print_error(GetLastError());
+    }
+    else
+        print_error(GetLastError());
+
     return false;
 }
 
@@ -104,7 +125,7 @@ void get_process_info(const std::string exe_name, PROCESS_INFO& process_info)
     // get process handle
     if (process_info.pid)
     {
-        boost::shared_ptr<void> handle(OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION, false, process_info.pid), CloseHandle);
+        boost::shared_ptr<void> handle(OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_QUERY_LIMITED_INFORMATION, false, process_info.pid), CloseHandle);
         if (handle.get() != NULL)
             process_info.handle = handle;
         else
