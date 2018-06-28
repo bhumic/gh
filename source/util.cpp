@@ -1,5 +1,10 @@
 #include "util.h"
 
+LPVOID rebase(LPVOID address, LPVOID old_base, LPVOID new_base)
+{
+    return reinterpret_cast<LPVOID>(reinterpret_cast<char*>(address) - reinterpret_cast<char*>(old_base) + reinterpret_cast<char*>(new_base));
+}
+
 void print_error(boost::uint32_t error_code)
 {
     LPTSTR msg = nullptr;
@@ -47,7 +52,6 @@ bool is_64bit(boost::shared_ptr<void>& handle)
 
     return false;
 }
-
 
 boost::uint32_t get_process_id(const boost::shared_ptr<void>& snapshot, const std::string& exe_name)
 {

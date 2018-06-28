@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     parser->obtain_handle();
     parser->read_dos_header();
     parser->read_nt_header();
-
+    
     boost::uint32_t old_protection = protect_memory<boost::uint32_t>(handle.get(), (LPVOID)process_info.base, PAGE_EXECUTE_READWRITE);
     DWORD first = *read_memory<DWORD>(handle.get(), (LPVOID)process_info.base);
     protect_memory<boost::uint32_t>(handle.get(), (LPVOID)process_info.base, old_protection);

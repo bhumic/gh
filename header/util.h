@@ -30,6 +30,8 @@ void read_structure(const boost::shared_ptr<void>& handle, LPVOID address, T& st
     protect_memory<T>(handle.get(), (LPVOID)address, old_protection);
 }
 
+LPVOID rebase(LPVOID address, LPVOID old_base, LPVOID new_base);
+
 void print_error(boost::uint32_t error_code);
 
 bool is_64bit(boost::shared_ptr<void>& handle);
