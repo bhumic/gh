@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\header\inject.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\pe.cpp" />
     <ClCompile Include="..\..\source\util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\header\inject.h" />
     <ClInclude Include="..\..\header\pe.h" />
     <ClInclude Include="..\..\header\tests.h" />
     <ClInclude Include="..\..\header\util.h" />

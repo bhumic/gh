@@ -32,6 +32,9 @@
     <ClCompile Include="..\..\source\pe.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\header\inject.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\header\util.h">
@@ -41,6 +44,9 @@
       <Filter>Header Files\header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\header\pe.h">
+      <Filter>Header Files\header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\header\inject.h">
       <Filter>Header Files\header</Filter>
     </ClInclude>
   </ItemGroup>
