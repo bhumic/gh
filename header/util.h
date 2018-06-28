@@ -22,6 +22,14 @@ struct PROCESS_INFO
     bool is64bit;
 };
 
+template <typename T>
+void read_structure(const boost::shared_ptr<void>& handle, LPVOID address, T& structure)
+{
+    boost::uint32_t old_protection = protect_memory<T>(handle.get(), (LPVOID)address, PAGE_EXECUTE_READWRITE);
+    structure = *read_memory<T>(handle.get(), (LPVOID)address);
+    protect_memory<T>(handle.get(), (LPVOID)address, old_protection);
+}
+
 void print_error(boost::uint32_t error_code);
 
 bool is_64bit(boost::shared_ptr<void>& handle);
