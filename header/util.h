@@ -70,6 +70,8 @@ bool write_memory(HANDLE handle, LPVOID address, boost::shared_ptr<T>& buffer)
     return true;
 }
 
+boost::uint32_t protect_memory(HANDLE handle, LPVOID address, size_t size, boost::uint32_t protection);
+
 template <typename T>
 boost::uint32_t protect_memory(HANDLE handle, LPVOID address, boost::uint32_t protection)
 {

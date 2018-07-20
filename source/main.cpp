@@ -18,6 +18,9 @@ int main(int argc, char* argv[])
     parser->read_nt_header();
     delete parser;
 
+
+    protect_memory(process_info.handle.get(), process_info.base, 0x1000, PAGE_EXECUTE_READWRITE);
+
     _CrtDumpMemoryLeaks();
     system("pause");
     return 0;

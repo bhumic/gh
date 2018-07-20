@@ -155,3 +155,14 @@ boost::shared_ptr<void> get_process_handle(boost::uint32_t pid)
 
     return handle;
 }
+
+boost::uint32_t protect_memory(HANDLE handle, LPVOID address, size_t size, boost::uint32_t protection)
+{
+    boost::uint32_t old_protection = 0;
+    if (!VirtualProtectEx(handle, address, size, protection, (PDWORD)&old_protection))
+    {
+        print_error(GetLastError());
+    }
+
+    return old_protection;
+}
