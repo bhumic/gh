@@ -119,7 +119,7 @@ void get_process_info(const std::string exe_name, PROCESS_INFO& process_info)
     // get load address of process
     if (process_info.pid)
     {
-        boost::shared_ptr<void> snapshot_base(CreateToolhelp32Snapshot(TH32CS_SNAPALL, process_info.pid), CloseHandle);
+        boost::shared_ptr<void> snapshot_base(CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, process_info.pid), CloseHandle);
         if (snapshot_base.get() != INVALID_HANDLE_VALUE)
             process_info.base = get_process_base(snapshot_base, exe_name);
         else

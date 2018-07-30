@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
     // Test process info data retrieval
     PROCESS_INFO process_info;
-    get_process_info("chrome.exe", process_info);
+    get_process_info("ConEmu.exe", process_info);
     
     // Test if parser for PE is working
     pe_parser_t* parser = create_pe_parser(process_info);

