@@ -1,6 +1,6 @@
 #include "inject.h"
 
-void injector_t::inject_shellcode(const PROCESS_INFO& process_info, const std::vector<BYTE>& shellcode)
+void injector_t::inject_shellcode_crt(const PROCESS_INFO& process_info, const std::vector<BYTE>& shellcode)
 {
    
     // Allocate memory for the shellcode
@@ -35,4 +35,13 @@ void injector_t::inject_shellcode(const PROCESS_INFO& process_info, const std::v
         print_error(GetLastError());
         return;
     }
+}
+
+void injector_t::inject_shellcode_mth(const PROCESS_INFO& process_info, const std::vector<BYTE>& shellcode)
+{
+    std::vector<BYTE> prologue = { 0x60, 0x9c }; // pushal; pushfd
+    std::vector<BYTE> epilogue = { 0x9d, 0x61 }; // popfd; popal
+    
+    // TODO
+
 }
