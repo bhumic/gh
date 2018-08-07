@@ -49,5 +49,8 @@
     <ClInclude Include="..\..\header\inject.h">
       <Filter>Header Files\header</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\header\shellcode.h">
+      <Filter>Header Files\header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

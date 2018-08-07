@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\header\inject.h" />
     <ClInclude Include="..\..\header\pe.h" />
+    <ClInclude Include="..\..\header\shellcode.h" />
     <ClInclude Include="..\..\header\tests.h" />
     <ClInclude Include="..\..\header\util.h" />
   </ItemGroup>
