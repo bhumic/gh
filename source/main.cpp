@@ -26,6 +26,9 @@ int main(int argc, char* argv[])
     injector_t injector;
     injector.inject_shellcode_crt(process_info, shellcode_msgboxa_32);
 
+    std::vector<BYTE> shellcode(shellcode_msgboxa_32.begin(), shellcode_msgboxa_32.end() - 1);
+    injector.inject_shellcode_mth(process_info, shellcode);
+
     _CrtDumpMemoryLeaks();
     system("pause");
     return 0;

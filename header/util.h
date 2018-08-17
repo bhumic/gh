@@ -17,6 +17,7 @@
 struct PROCESS_INFO
 {
     boost::uint32_t pid;
+    boost::uint32_t tid;
     LPVOID base;
     boost::shared_ptr<void> handle;
     bool is64bit;
@@ -37,6 +38,8 @@ void print_error(boost::uint32_t error_code);
 bool is_64bit(boost::shared_ptr<void>& handle);
 
 boost::uint32_t get_process_id(const boost::shared_ptr<void>& snapshot, const std::string& exe_name);
+
+boost::uint32_t get_thread_id(const boost::shared_ptr<void>& snapshot, const boost::uint32_t& pid);
 
 LPVOID get_process_base(const boost::shared_ptr<void>& snapshot, const std::string& exe_name);
 

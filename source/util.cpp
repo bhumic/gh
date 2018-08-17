@@ -80,6 +80,29 @@ boost::uint32_t get_process_id(const boost::shared_ptr<void>& snapshot, const st
     return pid;
 }
 
+boost::uint32_t get_thread_id(const boost::shared_ptr<void>& snapshot, const boost::uint32_t& pid)
+{
+
+    THREADENTRY32 entry;
+    // must be initialized prior to use
+    entry.dwSize = sizeof(THREADENTRY32);
+    if (Thread32First(snapshot.get(), &entry))
+    {
+        if (entry.th32OwnerProcessID == pid)
+            return entry.th32ThreadID;
+
+        while (Thread32Next(snapshot.get(), &entry))
+        {
+            if (entry.th32OwnerProcessID == pid)
+                return entry.th32ThreadID;
+        }
+    }
+    else
+        print_error(GetLastError());
+
+    return 0;
+}
+
 LPVOID get_process_base(const boost::shared_ptr<void>& snapshot, const std::string& exe_name)
 {
     LPVOID base = nullptr;
@@ -134,6 +157,16 @@ void get_process_info(const std::string exe_name, PROCESS_INFO& process_info)
                                                  , false, process_info.pid), CloseHandle);
         if (handle.get() != NULL)
             process_info.handle = handle;
+        else
+            print_error(GetLastError());
+    }
+
+    // get ID of main thread
+    if (process_info.pid)
+    {
+        boost::shared_ptr<void> snapshot_tid(CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0), CloseHandle);
+        if (snapshot_tid.get() != INVALID_HANDLE_VALUE)
+            process_info.tid = get_thread_id(snapshot_tid, process_info.pid);
         else
             print_error(GetLastError());
     }
