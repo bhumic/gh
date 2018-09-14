@@ -206,3 +206,8 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
         return;
     }*/
 }
+
+void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string& dll_path)
+{
+    // TODO
+}
