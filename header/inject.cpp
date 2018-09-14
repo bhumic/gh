@@ -200,9 +200,9 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
 
     // close the handle to main thread and free the memory
     CloseHandle(main_thread);
-    if (!VirtualFreeEx(process_info.handle.get(), allocated, 0, MEM_RELEASE))
+    /*if (!VirtualFreeEx(process_info.handle.get(), allocated, 0, MEM_RELEASE))
     {
         print_error(GetLastError());
         return;
-    }
+    }*/
 }
