@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\header\inject.cpp" />
+    <ClCompile Include="..\..\source\inject.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\pe.cpp" />
     <ClCompile Include="..\..\source\util.cpp" />

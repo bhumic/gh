@@ -32,7 +32,7 @@
     <ClCompile Include="..\..\source\pe.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\header\inject.cpp">
+    <ClCompile Include="..\..\source\inject.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
   </ItemGroup>
