@@ -209,5 +209,34 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
 
 void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string& dll_path)
 {
-    // TODO
+    
+    // allocate space for the DLL name
+    LPVOID dll_name = VirtualAllocEx(process_info.handle.get(), NULL, dll_path.size(), MEM_COMMIT, PAGE_EXECUTE);
+    if (dll_name == NULL)
+    {
+        print_error(GetLastError());
+        return;
+    }
+
+    // injecting the dll name into the process
+    SIZE_T bytes_written;
+    if (!WriteProcessMemory(process_info.handle.get(), dll_name, dll_path.c_str(), dll_path.size(), &bytes_written))
+    {
+        print_error(GetLastError());
+        return;
+    }
+
+    // find the address of LoadLibrary
+    HMODULE k32 = GetModuleHandleA("kernel32.dll");
+    LPVOID addr = GetProcAddress(k32, "LoadLibraryA");
+
+    // execute the shellcode
+    HANDLE thread = CreateRemoteThread(process_info.handle.get(), NULL, NULL, (LPTHREAD_START_ROUTINE)addr, dll_name, NULL, NULL);
+    if (thread == NULL)
+    {
+        print_error(GetLastError());
+        return;
+    }
+    WaitForSingleObject(thread, INFINITE);
+    CloseHandle(thread);
 }
