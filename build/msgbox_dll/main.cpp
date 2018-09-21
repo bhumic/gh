@@ -2,7 +2,6 @@
 
 DWORD WINAPI run_code(LPVOID param)
 {
-    // TODO: main code for the DLL
     MessageBoxA(NULL, "Hello from injected DLL!", "DLL injection test", MB_OK);
     return 1;
 }
