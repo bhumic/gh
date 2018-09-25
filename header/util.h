@@ -19,40 +19,40 @@ struct PROCESS_INFO
     boost::uint32_t pid;
     boost::uint32_t tid;
     LPVOID base;
-    boost::shared_ptr<void> handle;
+    HANDLE handle;
     bool is64bit;
 };
 
 template <typename T>
-void read_structure(const boost::shared_ptr<void>& handle, LPVOID address, T& structure)
+void read_structure(const HANDLE& handle, LPVOID address, T& structure)
 {
-    boost::uint32_t old_protection = protect_memory<T>(handle.get(), (LPVOID)address, PAGE_EXECUTE_READWRITE);
-    structure = *read_memory<T>(handle.get(), (LPVOID)address);
-    protect_memory<T>(handle.get(), (LPVOID)address, old_protection);
+    boost::uint32_t old_protection = protect_memory<T>(handle, (LPVOID)address, PAGE_EXECUTE_READWRITE);
+    structure = read_memory<T>(handle, (LPVOID)address);
+    protect_memory<T>(handle, (LPVOID)address, old_protection);
 }
 
 LPVOID rebase(LPVOID address, LPVOID old_base, LPVOID new_base);
 
 void print_error(boost::uint32_t error_code);
 
-bool is_64bit(boost::shared_ptr<void>& handle);
+bool is_64bit(HANDLE& handle);
 
-boost::uint32_t get_process_id(const boost::shared_ptr<void>& snapshot, const std::string& exe_name);
+boost::uint32_t get_process_id(const HANDLE& snapshot, const std::string& exe_name);
 
-boost::uint32_t get_thread_id(const boost::shared_ptr<void>& snapshot, const boost::uint32_t& pid);
+boost::uint32_t get_thread_id(const HANDLE& snapshot, const boost::uint32_t& pid);
 
-LPVOID get_process_base(const boost::shared_ptr<void>& snapshot, const std::string& exe_name);
+LPVOID get_process_base(const HANDLE& snapshot, const std::string& exe_name);
 
 void get_process_info(const std::string exe_name, PROCESS_INFO& process_info);
 
-boost::shared_ptr<void> get_process_handle(boost::uint32_t pid);
+HANDLE get_process_handle(boost::uint32_t pid);
 
 template <typename T>
-boost::shared_ptr<T> read_memory(HANDLE handle, LPVOID address)
+T read_memory(HANDLE handle, LPVOID address)
 {
-    boost::shared_ptr<T> value = boost::make_shared<T>();
+    T value;
     SIZE_T bytes_read = 0;
-    if (!ReadProcessMemory(handle, address, (LPVOID)value.get(), sizeof(T), (SIZE_T*)&bytes_read))
+    if (!ReadProcessMemory(handle, address, &value, sizeof(T), &bytes_read))
     {
         print_error(GetLastError());
     }
@@ -61,10 +61,10 @@ boost::shared_ptr<T> read_memory(HANDLE handle, LPVOID address)
 }
 
 template <typename T>
-bool write_memory(HANDLE handle, LPVOID address, boost::shared_ptr<T>& buffer)
+bool write_memory(HANDLE handle, LPVOID address, T value)
 {
-    boost::uint32_t bytes_written;
-    if (!WriteProcessMemory(handle, address, buffer.get(), sizeof(T), (SIZE_T*)&bytes_written))
+    SIZE_T bytes_written;
+    if (!WriteProcessMemory(handle, address, &value, sizeof(T), &bytes_written))
     {
         print_error(GetLastError());
         return false;

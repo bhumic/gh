@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
     injector_t injector;
     injector.inject_dll(process_info, "E:\\local_repository\\gh\\build\\msgbox_dll\\Release\\msgbox_dll.dll");
 
+    CloseHandle(process_info.handle);
     _CrtDumpMemoryLeaks();
     system("pause");
     return 0;
