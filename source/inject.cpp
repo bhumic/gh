@@ -226,14 +226,6 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
         return;
     }
 
-    // injecting the dll name into the process
-    SIZE_T bytes_written;
-    if (!WriteProcessMemory(process_info.handle, dll_name, dll_path.c_str(), dll_path.size(), &bytes_written))
-    {
-        print_error(GetLastError());
-        return;
-    }
-
     // injecting the shellcode into the process
     for (size_t i = 0; i < dll_path.length(); ++i)
     {
