@@ -14,7 +14,7 @@ void injector_t::inject_shellcode_crt(const PROCESS_INFO& process_info, const st
     // injecting the shellcode into the process
     for (size_t i = 0; i < shellcode.size(); ++i)
     {
-        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+        if (!write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
         {
             print_error(GetLastError());
             return;
@@ -39,7 +39,8 @@ void injector_t::inject_shellcode_crt(const PROCESS_INFO& process_info, const st
     }
 }
 
-void injector_t::inject_shellcode_mth_x64(const PROCESS_INFO& process_info, std::vector<BYTE> shellcode)
+#ifdef _WIN64
+void injector_t::inject_shellcode_mth(const PROCESS_INFO& process_info, std::vector<BYTE> shellcode)
 {
     std::vector<BYTE> prologue  = { 0x60, 0x9c }; // pushal; pushfd
     std::vector<BYTE> epilogue  = { 0x9d, 0x61 }; // popfd; popal
@@ -94,7 +95,7 @@ void injector_t::inject_shellcode_mth_x64(const PROCESS_INFO& process_info, std:
     // injecting the shellcode into the process
     for (size_t i = 0; i < shellcode.size(); ++i)
     {
-        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+        if (!write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
         {
             print_error(GetLastError());
             return;
@@ -125,8 +126,8 @@ void injector_t::inject_shellcode_mth_x64(const PROCESS_INFO& process_info, std:
         return;
     }
 }
-
-void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std::vector<BYTE> shellcode)
+#elif _WIN32
+void injector_t::inject_shellcode_mth(const PROCESS_INFO& process_info, std::vector<BYTE> shellcode)
 {
     std::vector<BYTE> prologue = { 0x60, 0x9c }; // pushal; pushfd
     std::vector<BYTE> epilogue = { 0x9d, 0x61 }; // popfd; popal
@@ -181,7 +182,7 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
     // injecting the shellcode into the process
     for (size_t i = 0; i < shellcode.size(); ++i)
     {
-        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+        if (!write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
         {
             print_error(GetLastError());
             return;
@@ -212,6 +213,7 @@ void injector_t::inject_shellcode_mth_x86(const PROCESS_INFO& process_info, std:
         return;
     }*/
 }
+#endif
 
 void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string& dll_path)
 {
@@ -235,7 +237,7 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
     // injecting the shellcode into the process
     for (size_t i = 0; i < dll_path.length(); ++i)
     {
-        if (write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(dll_name) + i), dll_path[i]))
+        if (!write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(dll_name) + i), dll_path[i]))
         {
             print_error(GetLastError());
             return;

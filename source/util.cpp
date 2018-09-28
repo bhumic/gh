@@ -39,7 +39,6 @@ bool is_64bit(HANDLE& handle)
             BOOL wow64 = false;
             if (is_wow64(handle, &wow64))
             {
-                CloseHandle(dll_handle);
                 return !wow64;
             }
             else
@@ -51,7 +50,6 @@ bool is_64bit(HANDLE& handle)
     else
         print_error(GetLastError());
 
-    CloseHandle(dll_handle);
     return false;
 }
 
