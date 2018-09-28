@@ -237,7 +237,7 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
     }
 
     // find the address of LoadLibrary
-    HMODULE k32 = GetModuleHandleA("kernel32.dll");
+    HMODULE k32 = get_module_handle(process_info, "kernel32.dll");
     LPVOID addr = GetProcAddress(k32, "LoadLibraryA");
 
     // execute the shellcode
@@ -249,4 +249,23 @@ void injector_t::inject_dll(const PROCESS_INFO& process_info, const std::string&
     }
     WaitForSingleObject(thread, INFINITE);
     CloseHandle(thread);
+}
+
+void injector_t::eject_dll(const PROCESS_INFO& process_info, const std::string dll_name)
+{
+
+    HMODULE handle = get_module_handle(process_info, "kernel32.dll");
+    if (handle)
+    {
+        LPVOID addr  = GetProcAddress(handle, "FreeLibrary");
+        HMODULE hdll = get_module_handle(process_info, dll_name);
+        HANDLE thread = CreateRemoteThread(process_info.handle, NULL, NULL, (LPTHREAD_START_ROUTINE)addr, (LPVOID)hdll, NULL, NULL);
+        if (thread == NULL)
+        {
+            print_error(GetLastError());
+            return;
+        }
+        WaitForSingleObject(thread, INFINITE);
+        CloseHandle(thread);
+    }
 }

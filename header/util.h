@@ -47,6 +47,8 @@ void get_process_info(const std::string exe_name, PROCESS_INFO& process_info);
 
 HANDLE get_process_handle(boost::uint32_t pid);
 
+HMODULE get_module_handle(const PROCESS_INFO& process_info, const std::string module_name);
+
 template <typename T>
 T read_memory(HANDLE handle, LPVOID address)
 {

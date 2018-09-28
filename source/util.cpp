@@ -1,5 +1,7 @@
 #include "util.h"
 
+#include <boost/algorithm/string.hpp>
+
 LPVOID rebase(LPVOID address, LPVOID old_base, LPVOID new_base)
 {
     return reinterpret_cast<LPVOID>(reinterpret_cast<char*>(address) - reinterpret_cast<char*>(old_base) + reinterpret_cast<char*>(new_base));
@@ -189,6 +191,44 @@ HANDLE get_process_handle(boost::uint32_t pid)
     {
         print_error(GetLastError());
         return nullptr;
+    }
+
+    return handle;
+}
+
+HMODULE get_module_handle(const PROCESS_INFO& process_info, const std::string module_name)
+{
+
+    HMODULE handle = NULL;
+    if (process_info.pid)
+    {
+        HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, process_info.pid);
+        if (snapshot != INVALID_HANDLE_VALUE)
+        {
+            MODULEENTRY32 entry;
+            entry.dwSize = sizeof(MODULEENTRY32);
+            if (Module32First(snapshot, (LPMODULEENTRY32)&entry))
+            {
+                if (module_name == boost::algorithm::to_lower_copy(std::string(entry.szModule)))
+                {
+                    handle = entry.hModule;
+                }
+
+                while (Module32Next(snapshot, (LPMODULEENTRY32)&entry))
+                {
+                    if (module_name == boost::algorithm::to_lower_copy(std::string(entry.szModule)))
+                    {
+                        handle =  entry.hModule;
+                        break;
+                    }
+                }
+            }
+            else
+                print_error(GetLastError());
+        }
+        else
+            print_error(GetLastError());
+        CloseHandle(snapshot);
     }
 
     return handle;

@@ -13,4 +13,6 @@ public:
     void inject_shellcode_mth(const PROCESS_INFO& process_info, std::vector<BYTE> shellcode);
     // inject DLL into a process
     void inject_dll(const PROCESS_INFO& process_info, const std::string& dll_path);
+    // eject dll from the process
+    void eject_dll(const PROCESS_INFO& process_info, const std::string dll_name);
 };

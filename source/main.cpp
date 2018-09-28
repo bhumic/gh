@@ -24,7 +24,8 @@ int main(int argc, char* argv[])
 
     // Test the injector modules
     injector_t injector;
-    injector.inject_dll(process_info, "E:\\local_repository\\gh\\build\\msgbox_dll\\Release\\msgbox_dll.dll");
+    injector.inject_dll(process_info, "E:\\LocalRepository\\gh\\build\\msgbox_dll\\Release\\msgbox_dll.dll");
+    injector.eject_dll(process_info, "msgbox_dll.dll");
 
     CloseHandle(process_info.handle);
     _CrtDumpMemoryLeaks();
