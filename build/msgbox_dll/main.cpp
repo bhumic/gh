@@ -13,8 +13,8 @@ BOOL WINAPI DllMain(HMODULE hDll, DWORD dwReason, LPVOID lpReserved)
     case DLL_PROCESS_ATTACH:
         HANDLE thread = CreateThread(NULL, 0, &run_code, NULL, 0, NULL);
         CloseHandle(thread);
+        //FreeLibraryAndExitThread(hDll, TRUE);
         break;
     }
-
     return TRUE;
 }
