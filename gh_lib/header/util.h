@@ -12,6 +12,12 @@
 #include "boost\shared_ptr.hpp"
 #include "boost\make_shared.hpp"
 
+#ifdef GHLIB_EXPORTS
+#define GHLIB_API __declspec(dllexport)
+#else
+#define GHLIB_API __declspec(dllimport)
+#endif
+
 #define MAX_HANDLES 1024
 
 struct PROCESS_INFO

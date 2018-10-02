@@ -18,11 +18,15 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{1F7627C7-FE30-4AFC-9503-98BDAFE73D35}</ProjectGuid>
-    <RootNamespace>gh</RootNamespace>
+    <RootNamespace>gh_test</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>gh_test</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -130,19 +134,6 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\source\inject.cpp" />
-    <ClCompile Include="..\..\source\main.cpp" />
-    <ClCompile Include="..\..\source\pe.cpp" />
-    <ClCompile Include="..\..\source\util.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\header\inject.h" />
-    <ClInclude Include="..\..\header\pe.h" />
-    <ClInclude Include="..\..\header\shellcode.h" />
-    <ClInclude Include="..\..\header\tests.h" />
-    <ClInclude Include="..\..\header\util.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
