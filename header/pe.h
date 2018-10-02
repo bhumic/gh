@@ -24,7 +24,7 @@ public:
 
 protected:
     // process handle
-    boost::shared_ptr<void> handle;
+    HANDLE handle;
     // process info
     const PROCESS_INFO process_info;
 };
