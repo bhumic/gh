@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
     // Test process info data retrieval
     PROCESS_INFO process_info;
-    get_process_info("ConEmu64.exe", process_info);
+    get_process_info("ConEmu.exe", process_info);
     
     // Test if parser for PE is working
     pe_parser_t* parser = create_pe_parser(process_info);
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     // Test the injector modules
     injector_t injector;
-    injector.inject_dll(process_info, "E:\\LocalRepository\\gh\\build\\msgbox_dll\\Release\\msgbox_dll.dll");
+    injector.inject_dll(process_info, "E:\\local_repository\\gh\\build\\msgbox_dll\\Release\\msgbox_dll.dll");
     injector.eject_dll(process_info, "msgbox_dll.dll");
 
     CloseHandle(process_info.handle);
