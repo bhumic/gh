@@ -2,53 +2,59 @@
 
 #include "util.h"
 
-class pe_parser_t;
-class pe32_parser_t;
-class pe64_parser_t;
-
-pe_parser_t* create_pe_parser(PROCESS_INFO& process_info);
-
-class pe_parser_t
+namespace gh
 {
-public:
-    pe_parser_t(PROCESS_INFO& _proc_info)
-        : process_info(_proc_info) 
-    {}
+    namespace pe
+    {
+        class pe_parser_t;
+        class pe32_parser_t;
+        class pe64_parser_t;
 
-    void obtain_handle();
+        pe_parser_t* create_pe_parser(gh::process::PROCESS_INFO& process_info);
 
-    void read_dos_header();
-    virtual void read_nt_header() = 0;
+        class pe_parser_t
+        {
+        public:
+            pe_parser_t(gh::process::PROCESS_INFO& _proc_info)
+                : process_info(_proc_info)
+            {}
 
-    IMAGE_DOS_HEADER dos_header;
+            void obtain_handle();
 
-protected:
-    // process handle
-    HANDLE handle;
-    // process info
-    const PROCESS_INFO process_info;
-};
+            void read_dos_header();
+            virtual void read_nt_header() = 0;
 
-class pe32_parser_t : public pe_parser_t
-{
-public:
-    pe32_parser_t(PROCESS_INFO& process_info)
-        : pe_parser_t(process_info)
-    {}
+            IMAGE_DOS_HEADER dos_header;
 
-    virtual void read_nt_header();
+        protected:
+            // process handle
+            HANDLE handle;
+            // process info
+            const gh::process::PROCESS_INFO process_info;
+        };
 
-    IMAGE_NT_HEADERS32 nt_header;
-};
+        class pe32_parser_t : public pe_parser_t
+        {
+        public:
+            pe32_parser_t(gh::process::PROCESS_INFO& process_info)
+                : pe_parser_t(process_info)
+            {}
 
-class pe64_parser_t : public pe_parser_t
-{
-public:
-    pe64_parser_t(PROCESS_INFO& process_info)
-        : pe_parser_t(process_info)
-    {}
+            virtual void read_nt_header();
 
-    virtual void read_nt_header();
+            IMAGE_NT_HEADERS32 nt_header;
+        };
 
-    IMAGE_NT_HEADERS64 nt_header;
-};
+        class pe64_parser_t : public pe_parser_t
+        {
+        public:
+            pe64_parser_t(gh::process::PROCESS_INFO& process_info)
+                : pe_parser_t(process_info)
+            {}
+
+            virtual void read_nt_header();
+
+            IMAGE_NT_HEADERS64 nt_header;
+        };
+    }
+}
