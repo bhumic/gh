@@ -6,6 +6,7 @@
 #include "pe.h"
 #include "inject.h"
 #include "shellcode.h"
+#include "hook.h"
 
 int main(int argc, char* argv[])
 {
@@ -27,8 +28,11 @@ int main(int argc, char* argv[])
     injector.inject_dll(process_info, "E:\\local_repository\\gh\\msgbox_dll\\Release\\msgbox_dll.dll");
     injector.eject_dll(process_info, "msgbox_dll.dll");
 
-    // Test if NOPing works
-    gh::memory::write_nop<30>(process_info.handle, process_info.base);
+    // Test NOPing
+    // gh::memory::write_nop<30>(process_info.handle, process_info.base);
+
+    // Test hooking
+    LPVOID orig_call = gh::hooking::hook_near_call<boost::int32_t>(process_info.handle, (LPVOID)0x0007ffb27f8da5d, (LPVOID)0x0007ffb27f8da45);
 
     CloseHandle(process_info.handle);
     _CrtDumpMemoryLeaks();

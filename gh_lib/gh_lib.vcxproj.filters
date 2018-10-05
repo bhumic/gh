@@ -33,6 +33,9 @@
     <ClInclude Include="header\util.h">
       <Filter>Header Files\header</Filter>
     </ClInclude>
+    <ClInclude Include="header\hook.h">
+      <Filter>Header Files\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\inject.cpp">
