@@ -68,6 +68,23 @@ namespace gh
             return true;
         }
 
+        // Write nop instructions to an address in memory
+        template <size_t size>
+        bool write_nop(HANDLE handle, LPVOID address)
+        {
+            boost::uint32_t old_protection = gh::memory::protect_memory<BYTE[size]>(handle, address, PAGE_EXECUTE_READWRITE);
+            for (size_t i = 0; i < size; ++i)
+            {
+                if (!write_memory<BYTE>(handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(address) + i), 0x90))
+                {
+                    gh::error::print_error(GetLastError());
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         // Protect memory based on size
         boost::uint32_t protect_memory(HANDLE handle, LPVOID address, size_t size, boost::uint32_t protection);
     }
