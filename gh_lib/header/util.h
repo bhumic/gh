@@ -73,6 +73,7 @@ namespace gh
         bool write_nop(HANDLE handle, LPVOID address)
         {
             boost::uint32_t old_protection = gh::memory::protect_memory<BYTE[size]>(handle, address, PAGE_EXECUTE_READWRITE);
+            
             for (size_t i = 0; i < size; ++i)
             {
                 if (!write_memory<BYTE>(handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(address) + i), 0x90))
@@ -81,6 +82,8 @@ namespace gh
                     return false;
                 }
             }
+
+            gh::memory::protect_memory<BYTE[size]>(handle, address, old_protection);
 
             return true;
         }
