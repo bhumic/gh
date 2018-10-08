@@ -131,7 +131,7 @@ namespace gh
             }
         }
 #elif _WIN32
-        void injector_t::inject_shellcode_mth(const PROCESS_INFO& process_info, std::vector<BYTE> shellcode)
+        void injector_t::inject_shellcode_mth(const gh::process::PROCESS_INFO& process_info, std::vector<BYTE> shellcode)
         {
             std::vector<BYTE> prologue = { 0x60, 0x9c }; // pushal; pushfd
             std::vector<BYTE> epilogue = { 0x9d, 0x61 }; // popfd; popal
@@ -146,7 +146,7 @@ namespace gh
             HANDLE main_thread = OpenThread(THREAD_SUSPEND_RESUME | THREAD_GET_CONTEXT | THREAD_SET_CONTEXT | THREAD_QUERY_INFORMATION, FALSE, process_info.tid);
             if (main_thread == NULL)
             {
-                print_error(GetLastError());
+                gh::error::print_error(GetLastError());
                 return;
             }
 
@@ -154,7 +154,7 @@ namespace gh
             DWORD suspend_count = SuspendThread(main_thread);
             if (suspend_count == (DWORD)-1)
             {
-                print_error(GetLastError());
+                gh::error::print_error(GetLastError());
                 return;
             }
 
@@ -171,7 +171,7 @@ namespace gh
             }
             else
             {
-                print_error(GetLastError());
+                gh::error::print_error(GetLastError());
                 return;
             }
 
@@ -179,16 +179,16 @@ namespace gh
             LPVOID allocated = VirtualAllocEx(process_info.handle, NULL, shellcode.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
             if (allocated == NULL)
             {
-                print_error(GetLastError());
+                gh::error::print_error(GetLastError());
                 return;
             }
 
             // injecting the shellcode into the process
             for (size_t i = 0; i < shellcode.size(); ++i)
             {
-                if (!write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
+                if (!gh::memory::write_memory<BYTE>(process_info.handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(allocated) + i), shellcode[i]))
                 {
-                    print_error(GetLastError());
+                    gh::error::print_error(GetLastError());
                     return;
                 }
             }
@@ -198,14 +198,14 @@ namespace gh
             context.ContextFlags = WOW64_CONTEXT_CONTROL;
             if (!Wow64SetThreadContext(main_thread, &context))
             {
-                print_error(GetLastError());
+                gh::error::print_error(GetLastError());
                 return;
             }
 
             // resume the main thread
             if (ResumeThread(main_thread) == (DWORD)-1)
             {
-                print_error(GetLastError());
+                gh::error::print_error(GetLastError());
                 return;
             }
 

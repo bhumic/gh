@@ -24,5 +24,9 @@ namespace gh
             gh::memory::protect_memory<T>(handle, reinterpret_cast<LPVOID>(reinterpret_cast<char*>(address) + 1), old_protection);
             return reinterpret_cast<LPVOID>(old_offset + reinterpret_cast<char*>(address) + sizeof(T) + 1);
         }
+
+        // Apply hook to Virtual Function based on class instance and VF index.
+        // Returns the original Virtual Function address
+        LPVOID hook_virtual_function(HANDLE handle, LPVOID instance, boost::uint32_t vf_index, LPVOID hook);
     }
 }
