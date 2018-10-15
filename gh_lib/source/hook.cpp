@@ -17,9 +17,9 @@ namespace gh
             LPVOID vf_original = gh::memory::read_memory<LPVOID>(handle, hook_index);
 
             // Write the hook into the VF Table
-            old_protection = gh::memory::protect_memory<LPVOID>(handle, instance, PAGE_READWRITE);
+            old_protection = gh::memory::protect_memory<LPVOID>(handle, hook_index, PAGE_READWRITE);
             gh::memory::write_memory<LPVOID>(handle, hook_index, hook);
-            gh::memory::protect_memory<LPVOID>(handle, instance, old_protection);
+            gh::memory::protect_memory<LPVOID>(handle, hook_index, old_protection);
 
             // Return the address of original function from VF table
             return vf_original;

@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     //LPVOID orig_call = gh::hooking::hook_near_call<boost::int32_t>(process_info.handle, (LPVOID)0x0007ffb27f8da5d, (LPVOID)0x0007ffb27f8da45);
 
     // Test VF hooking
-    LPVOID orig_vf = gh::hooking::hook_virtual_function(process_info.handle, (LPVOID)0x00ad4838, 1, (LPVOID)0x001b1000);
+    LPVOID orig_vf = gh::hooking::hook_virtual_function(process_info.handle, (LPVOID)0x00653090, 1, (LPVOID)0x00b31020);
 
     CloseHandle(process_info.handle);
     _CrtDumpMemoryLeaks();
